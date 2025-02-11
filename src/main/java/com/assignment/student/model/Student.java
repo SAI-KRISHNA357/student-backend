@@ -1,9 +1,10 @@
 package com.assignment.student.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity(name = "student")
 @Builder
@@ -28,9 +29,18 @@ public class Student {
     @Column(name = "age", nullable = false)
     @NotEmpty(message = "age is required") // Validates non-empty
     @Positive
+    @Min(value = 0, message = "Min Age should be 0")
+    @Max(value = 100, message = "Max Age should be 100")
     private String age;
 
     @Column(name = "mobile", nullable = false)
     @NotEmpty(message = "Mobile is required") // Validates non-empty
+    @Pattern(regexp = "^[0-9]{10}$", message = "Invalid mobile number.")
     private String mobile;
+
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
+
+    @Column(name = "updated_on")
+    private LocalDateTime updatedOn;
 }

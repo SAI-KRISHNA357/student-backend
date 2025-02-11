@@ -1,6 +1,7 @@
 package com.assignment.student.Exception;
 
 import com.assignment.student.model.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @ControllerAdvice
 public class StudentExceptionHandler {
 
@@ -28,7 +30,7 @@ public class StudentExceptionHandler {
                 .message(exceptionMessage)
                 .timestamp(LocalDateTime.now())
                 .build();
-
+        log.error("[Exception-Handler] Illegal Argument Exception Response : {}", errorResponse);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -41,6 +43,7 @@ public class StudentExceptionHandler {
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
+        log.error("[Exception-Handler] General Exception Response : {}", errorResponse);
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
