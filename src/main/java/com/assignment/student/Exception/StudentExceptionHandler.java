@@ -21,7 +21,7 @@ public class StudentExceptionHandler {
 
         ObjectError error =  ex.getBindingResult().getAllErrors().get(0);
 
-        String exceptionMessage = String.format("Invalid : %s || Message : %s",
+        String exceptionMessage = String.format("Invalid Field : %s || Error Message : %s",
                 ((org.springframework.validation.FieldError) error).getField(),
                 error.getDefaultMessage());
 
