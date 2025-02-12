@@ -1,6 +1,7 @@
 package com.assignment.student.controller;
 
 import com.assignment.student.Service.StudentService;
+import com.assignment.student.model.Response;
 import com.assignment.student.model.Student;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<String> saveStudent(@Valid @RequestBody Student student) {
+    public ResponseEntity<Response> saveStudent(@Valid @RequestBody Student student) {
 
         log.info("[Student-Controller] Save Student Request : {}", student);
         return new ResponseEntity<>(studentService.SaveStudent(student), HttpStatus.CREATED);
@@ -41,15 +42,11 @@ public class StudentController {
     }
 
     @PutMapping
-    public ResponseEntity<String> updateStudent(@Valid @RequestBody Student student) {
+    public ResponseEntity<Response> updateStudent(@Valid @RequestBody Student student) {
 
-        HttpStatus responseStatus = HttpStatus.OK;
-        String updateResponse = studentService.UpdateStudent(student);
-        if("Failure".equals(updateResponse)) {
-            responseStatus = HttpStatus.BAD_REQUEST;
-        }
+        Response updateResponse = studentService.UpdateStudent(student);
         log.info("[Student-Controller] Update Student Request for : {} is : {}", student, updateResponse);
-        return new ResponseEntity<>(updateResponse, responseStatus);
+        return new ResponseEntity<>(updateResponse, HttpStatus.valueOf(updateResponse.getStatus()));
     }
 
     @DeleteMapping("{studentId}")

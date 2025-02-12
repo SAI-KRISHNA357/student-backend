@@ -1,9 +1,11 @@
 package com.assignment.student.Service;
 
 import com.assignment.student.Repository.StudentRepository;
+import com.assignment.student.model.Response;
 import com.assignment.student.model.Student;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,13 +23,17 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
-    public String SaveStudent(Student student) {
+    public Response SaveStudent(Student student) {
 
         student.setCreatedOn(LocalDateTime.now());
         student.setUpdatedOn(LocalDateTime.now());
         studentRepository.save(student);
         log.info("[Student-Service] Student Saved Successfully");
-        return "SUCCESS";
+        return Response.builder()
+                .status(HttpStatus.CREATED.value())
+                .message("SUCCESS")
+                .timestamp(LocalDateTime.now())
+                .build();
 
     }
 
@@ -36,12 +42,21 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
-    public String UpdateStudent(Student student) {
+    public Response UpdateStudent(Student student) {
+
+        Response updateResponse = Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("SUCCESS")
+                .timestamp(LocalDateTime.now())
+                .build();
 
         if(null == student.getId() || !studentRepository.existsById(student.getId())) {
             log.info("[Student-Service] Student Id is invalid : {}", student.getId());
-            return "Failure";
+            updateResponse.setMessage("Invalid Update Request");
+            updateResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return updateResponse;
         }
+
         Student existingRecord = studentRepository.getReferenceById(student.getId());
         existingRecord.setName(student.getName());
         existingRecord.setAge(student.getAge());
@@ -49,7 +64,7 @@ public class StudentService {
         existingRecord.setMobile(student.getMobile());
         existingRecord.setUpdatedOn(LocalDateTime.now());
         studentRepository.save(existingRecord);
-        return "SUCCESS";
+        return updateResponse;
     }
 
     public boolean deleteStudentById(long id) {
